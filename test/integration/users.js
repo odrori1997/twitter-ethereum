@@ -1,5 +1,10 @@
 const UserStorage = artifacts.require('UserStorage')
 
+const assertVMException = error => {
+    const hasException = error.toString().search("VM Exception");
+    assert(hasException, "Should expect a VM Exception error");
+}
+
 contract('users', () => {
     it("can create user", async () => {
         const storage = await UserStorage.deployed()
@@ -17,4 +22,26 @@ contract('users', () => {
         const username = web3.utils.toAscii(userInfo[1]).replace(/\u0000/g, '')
         assert.equal(username, "Omer")
     })
+
+    it("can't create user without controller", async () => {
+        const storage = await UserStorage.deployed()
+    
+        try {
+          const username = web3.utils.fromAscii("tristan")
+          await storage.createUser(username)
+          assert.fail()
+        } catch (err) {
+          assertVMException(err); 
+        }
+      })
+
+
+        it("can create user with controller", async () => {
+          const controller = await UserController.deployed()
+      
+          const username = web3.utils.fromAscii("tristan")
+          const tx = await controller.createUser(username)
+      
+          assert.isOk(tx)
+        })
 })

@@ -1,20 +1,24 @@
 pragma solidity ^0.8.11;
 
 import "truffle/Assert.sol";
-import "truffle/DeployedAddresses.sol";
 import "../../contracts/tweets/TweetStorage.sol";
 
 contract TestTweetStorage {
-    function testCreateTweet() public {
-        TweetStorage _storage = TweetStorage(DeployedAddresses.TweetStorage());
+  TweetStorage tweetStorage;
 
-        uint _userId = 1;
-        uint _expectedTweetId = 1;
+  constructor() public {
+    tweetStorage = new TweetStorage();
+    tweetStorage.setControllerAddr(address(this));
+  }
 
-        Assert.equal(
-            _storage.createTweet(_userId, "Banana pancakes"),
-            _expectedTweetId,
-            "Should create a tweet with ID 1"
-        );
-    }
+  function testCreateTweet() public {
+    uint _userId = 1;
+    uint _expectedTweetId = 1;
+
+    Assert.equal(
+      tweetStorage.createTweet(_userId, "Hello world!"), 
+      _expectedTweetId, 
+      "Should create tweet with ID 1"
+    );
+  }
 }

@@ -1,13 +1,20 @@
 pragma solidity ^0.8.11;
 
 import "truffle/Assert.sol";
-import "truffle/DeployedAddresses.sol";
 import "../../contracts/users/UserStorage.sol";
 
 contract TestUserStorage {
-    function testCreateFirstUser() public {
-        UserStorage _storage = UserStorage(DeployedAddresses.UserStorage());
-        uint _expectedId = 1;
-        Assert.equal(_storage.createUser("Omer"), _expectedId, "Should create user with ID 1");
-    }
+  UserStorage userStorage;
+
+  constructor() public {
+    userStorage = new UserStorage();
+    userStorage.setControllerAddr(address(this));
+  }
+
+  function testCreateFirstUser() public {
+    uint _expectedId = 1;
+
+    Assert.equal(userStorage.createUser("tristan"), _expectedId, "Should create user with ID 1");
+  }
+
 }
